@@ -1,0 +1,1062 @@
+<!-- 
+  ⚠️ PERINGATAN: FILE INI SANGAT PANJANG (> 500 BARIS) ⚠️
+  Pastikan Anda menyalin (copy) SELURUH kode dari awal <!DOCTYPE html> 
+  hingga akhir </html> agar aplikasi berjalan sempurna.
+  Jika terpotong, silakan minta lanjutan di chat berikutnya.
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipe rev-3 — Aplikasi RPP KBC Jenjang RA</title>
+<style>
+  :root{
+    --primary:#2563EB; --primary-dark:#1D4ED8;
+    --accent:#059669; --accent-light:#10B981;
+    --amber:#F59E0B; --rose:#F43F5E; --purple:#8B5CF6;
+    --bg:#FFFBEB; --card:#FFFDF5; --text:#0F172A; --muted:#475569;
+    --border:#FDE68A; --input:#E2E8F0; --surface:#FFFFFF;
+    --shadow-sm:0 2px 8px rgba(15,23,42,.06);
+    --shadow-md:0 6px 20px rgba(15,23,42,.10);
+    --shadow-lg:0 14px 36px rgba(15,23,42,.14);
+  }
+  body.dark{
+    --bg:#0F172A; --card:#1E293B; --text:#F1F5F9; --muted:#CBD5E1;
+    --border:#334155; --input:#475569; --surface:#0F172A;
+    --shadow-sm:0 2px 8px rgba(0,0,0,.3);
+    --shadow-md:0 6px 20px rgba(0,0,0,.4);
+    --shadow-lg:0 14px 36px rgba(0,0,0,.5);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Segoe UI',system-ui,Arial,sans-serif;
+    background:var(--bg); color:var(--text);
+    line-height:1.5; padding:16px; font-size:14px;
+    transition:background .35s ease, color .35s ease;
+    min-height:100vh;
+    /* Mencegah seleksi teks untuk kunci copy-paste */
+    user-select: none; 
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+  /* Ornamen dekoratif */
+  .ornament{position:fixed;pointer-events:none;z-index:0;opacity:.35;
+    animation:float 6s ease-in-out infinite;user-select:none}
+  @keyframes float{
+    0%,100%{transform:translateY(0) rotate(0deg)}
+    50%{transform:translateY(-18px) rotate(10deg)}
+  }
+  .orn-1{top:8%;left:3%;font-size:34px;color:#FCA5A5}
+  .orn-2{top:15%;right:4%;font-size:38px;color:#FCD34D;animation-delay:1s}
+  .orn-3{bottom:12%;right:6%;font-size:30px;color:#F9A8D4;animation-delay:2s}
+  .orn-4{bottom:20%;left:4%;font-size:32px;color:#6EE7B7;animation-delay:1.5s}
+  @media(max-width:768px){.orn-2,.orn-3{display:none}}
+  
+    .orn-5{bottom:30%;right:3%;font-size:28px;color:#93C5FD;animation-delay:.5s}
+  .orn-6{top:60%;left:2%;font-size:24px;color:#C4B5FD;animation-delay:2.8s}
+  @media(max-width:768px){.orn-5,.orn-6{display:none}}
+
+    /* Watermark PROTOTIPE */
+  .watermark{
+    position:fixed;top:50%;left:50%;
+    transform:translate(-50%,-50%) rotate(-30deg);
+    font-size:clamp(48px,8vw,110px);font-weight:900;
+    color:rgba(244,63,94,.18);pointer-events:none;
+    z-index:0;white-space:nowrap;user-select:none;
+    letter-spacing:.08em;
+  }
+  body.dark .watermark{color:rgba(244,63,94,.25)}
+
+  .wrap{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+
+  /* Banner prototipe */
+  .prototype-banner{
+    background:linear-gradient(135deg,#F59E0B,#D97706);
+    color:#fff;text-align:center;padding:11px 16px;
+    border-radius:12px;font-weight:800;font-size:13px;
+    letter-spacing:.5px;margin-bottom:14px;
+    box-shadow:0 4px 14px rgba(245,158,11,.45);
+    animation:bannerPulse 3s ease-in-out infinite;
+  }
+  @keyframes bannerPulse{
+    0%,100%{box-shadow:0 4px 14px rgba(245,158,11,.45)}
+    50%{box-shadow:0 6px 22px rgba(245,158,11,.7)}
+  }
+
+  /* Top bar dengan toggle dark mode visual */
+  .top-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:10px;margin-bottom:16px;flex-wrap:wrap;
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px;border-radius:100px;font-size:11.5px;
+    font-weight:700;background:var(--surface);
+    border:1.5px solid var(--border);box-shadow:var(--shadow-sm);
+    color:var(--text);
+  }
+  .pill.green{color:#047857;background:linear-gradient(135deg,#ECFDF5,#F0FDF4);
+    border-color:#A7F3D0}
+  .pill.rose{color:#BE123C;background:linear-gradient(135deg,#FFF1F2,#FFE4E6);
+    border-color:#FECDD3}
+  body.dark .pill.green{background:linear-gradient(135deg,#064E3B,#065F46);
+    border-color:#047857;color:#A7F3D0}
+  body.dark .pill.rose{background:linear-gradient(135deg,#881337,#9F1239);
+    border-color:#BE123C;color:#FECDD3}
+  .pill .live-dot{width:7px;height:7px;border-radius:50%;background:#10B981;
+    box-shadow:0 0 0 3px rgba(16,185,129,.25);animation:pulse 2s infinite}
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 3px rgba(16,185,129,.25)}
+    50%{box-shadow:0 0 0 6px rgba(16,185,129,.05)}
+  }
+
+  /* Toggle dark mode visual */
+  .theme-btn{
+    width:42px;height:42px;border-radius:12px;
+    background:var(--surface);color:var(--text);
+    border:2px solid var(--border);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;box-shadow:var(--shadow-md);
+    transition:all .25s cubic-bezier(.4,0,.2,1);
+  }
+  .theme-btn:hover{transform:translateY(-2px) rotate(15deg);
+    box-shadow:var(--shadow-lg)}
+  .theme-btn:active{transform:scale(.94)}
+
+  /* Header */
+  header{text-align:center;margin-bottom:20px}
+  header h1{
+    font-size:clamp(20px,4.2vw,34px);font-weight:800;
+    color:var(--text);line-height:1.15;letter-spacing:-.02em;
+  }
+  header h1 span{color:var(--rose);display:block;font-size:.85em;margin-top:4px}
+  header .subtitle{
+    color:var(--accent);font-size:13px;font-weight:600;margin-top:8px;
+  }
+  body.dark header .subtitle{color:#6EE7B7}
+  header .reg{
+    display:inline-block;margin-top:12px;
+    background:linear-gradient(135deg,#FEF3C7,#FCE7F3,#E0F2FE);
+    border:2px solid #FBBF24;border-radius:14px;
+    padding:10px 18px;font-size:11.5px;font-weight:700;
+    color:#0F172A;line-height:1.6;max-width:760px;
+    box-shadow:0 4px 14px rgba(251,191,36,.2);
+  }
+  body.dark header .reg{
+    background:linear-gradient(135deg,#78350F,#831843,#0C4A6E);
+    color:#FEF3C7;
+  }
+  header .reg .chip{
+    display:inline-block;background:#fff;border:1.5px solid #FCD34D;
+    padding:3px 9px;border-radius:100px;font-size:10.5px;
+    font-weight:700;color:#1E40AF;margin:2px;
+  }
+  body.dark header .reg .chip{background:#1E293B;color:#FDE68A}
+  
+  /* Author Badge (Dipindah ke bawah reg) */
+  header .author{
+    display:inline-flex;align-items:center;gap:10px;
+    margin-top:14px;padding:10px 22px 10px 10px;
+    background:linear-gradient(135deg,#FFFFFF,#F5F3FF);
+    border:2px solid var(--border);border-radius:100px;
+    font-size:13px;font-weight:700;color:var(--text);
+    box-shadow:0 6px 18px rgba(139,92,246,.15);
+  }
+  body.dark header .author{background:linear-gradient(135deg,#1E293B,#2D1B4E)}
+  header .author .av{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg,#FCA5A5,#F9A8D4);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;color:#BE123C;flex-shrink:0;
+  }
+  header .author .nm{
+    background:linear-gradient(135deg,#8B5CF6,#EC4899);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;font-weight:800;
+  }
+
+  /* Card */
+  .card{
+    background:var(--card);border:1.5px solid var(--border);
+    border-radius:16px;padding:20px;margin-bottom:16px;
+    box-shadow:var(--shadow-md);
+    transition:all .35s cubic-bezier(.4,0,.2,1);
+    position:relative;
+  }
+  .card:hover{
+    box-shadow:var(--shadow-lg);
+    transform:translateY(-2px);
+  }
+  .card-header{
+    display:flex;align-items:center;gap:12px;margin-bottom:16px;
+    padding-bottom:12px;border-bottom:2px solid var(--border);
+  }
+  .icon-box{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;color:#fff;flex-shrink:0;
+    box-shadow:0 4px 12px rgba(15,23,42,.15);
+    transition:transform .3s ease;
+  }
+  .card:hover .icon-box{transform:rotate(-6deg) scale(1.06)}
+  .icon-orange{background:linear-gradient(135deg,#FB923C,#EA580C)}
+  .icon-blue{background:linear-gradient(135deg,#60A5FA,#2563EB)}
+  .icon-teal{background:linear-gradient(135deg,#34D399,#059669)}
+  .icon-cyan{background:linear-gradient(135deg,#0EA5E9,#0891B2)}
+  .card-header h2{font-size:16px;font-weight:800;color:var(--text)}
+  .card-header p{font-size:12px;color:var(--muted)}
+
+  /* Form */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .form-group{display:flex;flex-direction:column}
+  .form-group.full{grid-column:1/-1}
+  .form-group label{
+    font-size:11.5px;font-weight:700;color:var(--muted);
+    margin-bottom:4px;display:flex;align-items:center;gap:4px;
+  }
+  .form-group input,.form-group select{
+    width:100%;padding:9px 12px;
+    background:var(--input);border:1.5px solid var(--border);
+    border-radius:8px;font-size:13px;color:var(--text);
+    cursor:not-allowed;font-family:inherit;
+    transition:all .2s ease;
+  }
+  .form-group input:disabled,.form-group select:disabled{
+    opacity:.85;
+  }
+
+  /* Mode cards */
+    /* Hover & Glow untuk Card RPPM */
+  #cardRppm{
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 0 0 rgba(37,99,235,0);
+  }
+  #cardRppm:hover{
+    transform:translateY(-4px) scale(1.02);
+    box-shadow:0 8px 24px rgba(37,99,235,.45), 0 0 16px rgba(96,165,250,.6);
+    border-color:#2563EB;
+  }
+  #cardRppm:hover .mi{
+    transform:scale(1.15) rotate(-8deg);
+    box-shadow:0 0 16px rgba(37,99,235,.7);
+  }
+  #cardRppm.selected{
+    animation:rppmGlow 2s ease-in-out infinite;
+  }
+  @keyframes rppmGlow{
+    0%,100%{box-shadow:0 0 8px rgba(37,99,235,.5)}
+    50%{box-shadow:0 0 22px rgba(37,99,235,.9)}
+  }
+  .mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .mode-card{
+    display:flex;align-items:center;gap:12px;padding:14px;
+    border-radius:12px;border:2.5px solid var(--input);
+    background:var(--surface);cursor:not-allowed;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+    opacity:.85;
+  }
+  .mode-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .mode-card.selected{
+    border-color:var(--accent);
+    background:linear-gradient(135deg,#ECFDF5,#D1FAE5);
+    opacity:1;
+  }
+  body.dark .mode-card.selected{
+    background:linear-gradient(135deg,#064E3B,#065F46);
+    border-color:#34D399;
+  }
+  .mode-card .mi{
+    width:44px;height:44px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;color:#fff;
+    background:linear-gradient(135deg,#34D399,#059669);
+    flex-shrink:0;transition:transform .3s ease;
+  }
+  .mode-card:hover .mi{transform:scale(1.08) rotate(6deg)}
+  .mode-card.blue .mi{background:linear-gradient(135deg,#60A5FA,#2563EB)}
+  .mode-card .mt{font-weight:800;font-size:13.5px;color:var(--text)}
+  .mode-card .md{font-size:11px;color:var(--muted)}
+
+  /* Panel A-E */
+  .checks-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);
+    gap:10px;margin-bottom:16px;
+  }
+  .panel{
+    background:var(--surface);border:2px solid var(--input);
+    border-radius:12px;padding:10px;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+  }
+  .panel:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-md);
+    border-color:var(--primary);
+  }
+  .panel .ph{
+    display:flex;align-items:center;gap:6px;margin-bottom:8px;
+    padding-bottom:8px;border-bottom:1.5px solid var(--border);
+  }
+  .panel .pn{
+    width:22px;height:22px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;color:#fff;
+    background:linear-gradient(135deg,#60A5FA,#1D4ED8);
+    flex-shrink:0;
+  }
+  .panel:nth-child(2) .pn{background:linear-gradient(135deg,#FBBF24,#D97706)}
+  .panel:nth-child(3) .pn{background:linear-gradient(135deg,#A78BFA,#6D28D9)}
+  .panel:nth-child(4) .pn{background:linear-gradient(135deg,#FB7185,#BE123C)}
+  .panel:nth-child(5) .pn{background:linear-gradient(135deg,#34D399,#047857)}
+  .panel .pt{
+    font-size:10.5px;font-weight:800;color:var(--text);
+    line-height:1.2;
+  }
+  .panel label{
+    display:flex;align-items:flex-start;gap:6px;
+    padding:5px 7px;background:var(--bg);
+    border:1.5px solid var(--input);border-radius:6px;
+    font-size:10px;color:var(--muted);
+    margin-bottom:5px;cursor:not-allowed;
+    transition:all .2s ease;line-height:1.3;
+  }
+  .panel label:last-child{margin-bottom:0}
+  .panel label:hover{
+    background:var(--input);color:var(--text);
+    transform:translateX(2px);
+  }
+  .panel input[type=checkbox]{
+    margin-top:1px;accent-color:var(--primary);cursor:not-allowed;
+    flex-shrink:0;
+  }
+  .panel label.checked{
+    background:linear-gradient(135deg,#DBEAFE,#BFDBFE);
+    border-color:var(--primary);color:#1E3A8A;font-weight:700;
+  }
+  body.dark .panel label.checked{
+    background:linear-gradient(135deg,#1E3A8A,#1E40AF);color:#DBEAFE;
+  }
+
+  /* LKPD */
+  .lkpd-types{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:8px;margin-bottom:14px;
+  }
+  .lkpd-types label{
+    display:flex;align-items:center;gap:6px;
+    padding:8px 10px;background:var(--surface);
+    border:2px solid var(--input);border-radius:8px;
+    font-size:11.5px;font-weight:600;cursor:not-allowed;
+    transition:all .2s ease;color:var(--muted);
+  }
+  .lkpd-types label:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .lkpd-types label.checked{
+    background:#CFFAFE;border-color:#0891B2;color:#155E75;
+  }
+  body.dark .lkpd-types label.checked{
+    background:#155E75;color:#A5F3FC;border-color:#22D3EE;
+  }
+  .lkpd-jenis{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:6px;
+  }
+  .lkpd-jenis label{
+    display:flex;align-items:center;gap:5px;
+    padding:6px 8px;background:var(--surface);
+    border:1.5px solid var(--input);border-radius:6px;
+    font-size:10.5px;cursor:not-allowed;
+    transition:all .2s ease;color:var(--muted);
+  }
+  .lkpd-jenis label:hover{background:var(--input);color:var(--text)}
+  .lkpd-jenis label.checked{
+    background:#ECFEFF;border-color:#06B6D4;
+    color:#0E7490;font-weight:700;
+  }
+  body.dark .lkpd-jenis label.checked{
+    background:#155E75;color:#A5F3FC;border-color:#22D3EE;
+  }
+
+  /* Buttons disabled */
+  .btn-row{
+    display:grid;grid-template-columns:repeat(5,1fr);
+    gap:10px;margin-top:18px;padding-top:16px;
+    border-top:2px solid var(--border);
+  }
+  .btn{
+    display:flex;align-items:center;justify-content:center;
+    gap:6px;padding:11px 12px;border-radius:10px;
+    font-size:12px;font-weight:700;color:#fff;
+    border:none;cursor:not-allowed;opacity:.6;
+    box-shadow:0 3px 10px rgba(15,23,42,.15);
+    font-family:inherit;transition:all .2s ease;
+  }
+  .btn:hover{opacity:.75}
+  .btn-green{background:linear-gradient(135deg,#34D399,#059669)}
+  .btn-purple{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
+  .btn-orange{background:linear-gradient(135deg,#FBBF24,#D97706)}
+  .btn-cyan{background:linear-gradient(135deg,#22D3EE,#0891B2)}
+  .btn-red{background:linear-gradient(135deg,#FB7185,#E11D48)}
+
+  /* AI BOX STYLES (Dari index.html) */
+  .ai-box{
+    background:linear-gradient(135deg,#EFF6FF,#ECFDF5);
+    border:1.5px solid #BFDBFE;border-radius:14px;
+    padding:16px 20px;margin-top:18px;transition:all .2s ease;
+  }
+  body.dark .ai-box{background:linear-gradient(135deg,#1E293B,#0F2D2D);border-color:#1D4ED8}
+  .ai-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .ai-head .label{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:800;color:var(--text)}
+  .ai-head .label .dot-ai{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2563EB,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .switch{position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0;position:absolute}
+  .switch .slider{position:absolute;cursor:pointer;inset:0;background:#CBD5E1;border-radius:100px;transition:.2s ease}
+  .switch .slider:before{content:'';position:absolute;height:20px;width:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s ease;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .switch input:checked + .slider{background:linear-gradient(135deg,#2563EB,#059669)}
+  .switch input:checked + .slider:before{transform:translateX(22px)}
+  .ai-status{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--muted)}
+  .ai-status .dot{width:8px;height:8px;border-radius:50%;background:#10B981;box-shadow:0 0 0 3px rgba(16,185,129,.2);flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+  .ai-status .dot.off{background:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.2)}
+  .ai-status .dot.err{background:#F43F5E;box-shadow:0 0 0 3px rgba(244,63,94,.2)}
+
+  /* Responsive */
+  @media(max-width:900px){
+    .checks-grid{grid-template-columns:repeat(2,1fr)}
+    .grid3{grid-template-columns:1fr 1fr}
+    .btn-row{grid-template-columns:1fr 1fr}
+    .lkpd-jenis{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:600px){
+    body{padding:12px}
+    .grid2,.grid3,.mode-cards,.lkpd-types{grid-template-columns:1fr}
+    .checks-grid{grid-template-columns:1fr}
+    .btn-row{grid-template-columns:1fr}
+    .top-bar{flex-direction:column;align-items:stretch}
+  }
+</style>
+</head>
+<body class="dark">
+<!-- Ornamen -->
+<div class="ornament orn-1">♡</div>
+<div class="ornament orn-2">★</div>
+<div class="ornament orn-3">♡</div>
+<div class="ornament orn-4">🍃</div>
+<div class="ornament orn-5">✨</div>
+<div class="ornament orn-6">✧</div>
+<div class="watermark">PROTOTIPE</div>
+
+<div class="wrap">
+
+  <!-- Banner prototipe -->
+  <div class="prototype-banner">
+    🔒 MODE PROTOTIPE — Tampilan saja, tidak dapat digunakan
+  </div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="pill green">🌐 Sistem Perencanaan Pembelajaran Digital RA</div>
+        <button class="theme-btn" id="themeBtn" title="Toggle tema (visual)">☀️</button>
+    <!-- Mengganti teks "Prototipe rev-2" dengan Jam Live -->
+    <div class="pill rose"><span class="live-dot"></span><span id="liveClock">Memuat...</span></div>
+  </div>
+
+  <!-- Header -->
+    <!-- Header -->
+  <header>
+    <h1>Aplikasi RPP Jenjang RA<span>Kurikulum Berbasis Cinta (KBC)</span></h1>
+    <p class="subtitle">Perencanaan Pembelajaran Raudhatul Arfan Modern &amp; Ceria — dengan 250 Variasi Gambar LKPD</p>
+    
+    <div class="reg">
+      <strong>📚 Mengacu pada:</strong><br>
+      <span class="chip">KMA No. 450 Tahun 2024</span>
+      <span class="chip">Permendikbudristek No. 12 Tahun 2024</span>
+      <span class="chip">Keputusan BSKAP No. 032/H/KR/2024 (CP PAUD)</span>
+      <span class="chip">Pedoman KBC Kemenag</span>
+      <span class="chip">Deep Learning</span>
+    </div>
+
+    <div style="text-align: center; margin-top: 14px;">
+      <div class="author" style="display: inline-flex; align-items: center; gap: 10px; padding: 8px 20px 8px 8px; margin: 0;">
+        <span class="av">👨‍🏫</span>
+        <span>Dibuat oleh : <span class="nm">Sugianto, S.Pd., Gr.</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Card Identitas -->
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-box icon-orange">🏫</div>
+      <div><h2>Bagian 1: Identitas Satuan Pendidikan</h2>
+        <p>Contoh data profil sekolah</p></div>
+    </div>
+    <div class="grid2">
+      <div class="form-group"><label>Nama Satuan Pendidikan</label>
+        <input value="RA Mazkira Imani" disabled></div>
+      <div class="form-group"><label>Kelompok / Rombel</label>
+        <input value="Kelompok A - Mawar" disabled></div>
+      <div class="form-group"><label>Kota / Kabupaten</label>
+        <input value="Barito Kuala" disabled></div>
+      <div class="form-group"><label>Tempat &amp; Tanggal RPP</label>
+        <input value="Barito Kuala, 16 September 2026" disabled></div>
+      <div class="form-group"><label>Nama Guru Kelas</label>
+        <input value="Elma Noor Safitri, S.Pd." disabled></div>
+      <div class="form-group"><label>NIP / NPK Guru</label>
+        <input value="199201012024011001" disabled></div>
+      <div class="form-group"><label>Nama Kepala Sekolah</label>
+        <input value="Sugianto, S.Pd., Gr." disabled></div>
+      <div class="form-group"><label>NIP / NPK Kepala Sekolah</label>
+        <input value="19850302201012003" disabled></div>
+    </div>
+  </div>
+
+  <!-- Card Desain -->
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-box icon-blue">📚</div>
+      <div><h2>Bagian 2: Desain Pembelajaran</h2>
+        <p>Mode RPP &amp; komponen KBC</p></div>
+    </div>
+
+    <div class="mode-cards">
+            <div class="mode-card selected" id="cardRpph" style="cursor:pointer">
+        <div class="mi">📅</div>
+        <div><div class="mt">RPPH (Harian)</div><div class="md">Perencanaan 1 hari</div></div>
+      </div>
+            <div class="mode-card blue" id="cardRppm" style="cursor:pointer">
+        <div class="mi">📆</div>
+        <div><div class="mt">RPPM (Mingguan)</div><div class="md">Perencanaan 1 minggu</div></div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-bottom:16px">
+      <div class="form-group"><label>Semester / Bulan</label>
+        <input value="Semester I / September 2026" disabled></div>
+		
+      <div class="form-group"><label>Hari / Tanggal</label>
+        <input value="Senin, 16 September 2026" disabled></div>
+      <div class="form-group"><label>Fase</label>
+        <input value="Fase Fondasi" disabled></div>
+      <div class="form-group"><label>Kelompok / Umur</label>
+        <input value="Kelompok A (4-5 Tahun)" disabled></div>
+      <div class="form-group"><label>Topik</label>
+        <input value="Diriku" disabled></div>
+      <div class="form-group"><label>Sub Topik</label>
+        <input value="Anggota Tubuhku" disabled></div>
+      <div class="form-group"><label>Alokasi Waktu</label>
+        <input value="1 Hari (150 Menit)" disabled></div>
+      <div class="form-group"><label>JP / Pertemuan</label>
+        <input value="30 JP / Hari" disabled></div>
+    </div>
+    <div id="zoneRppm" style="display:none">
+      <div class="grid3">
+        <div class="form-group"><label>Minggu Ke</label><input disabled></div>
+        <div class="form-group"><label>Topik</label><input disabled></div>
+        <div class="form-group"><label>Sub Topik</label><input disabled></div>
+      </div>
+    </div>
+    <div class="checks-grid">
+      <div class="panel">
+        <div class="ph"><span class="pn">A</span><span class="pt">Dimensi Profil Lulusan</span></div>
+        <label class="checked"><input type="checkbox" checked disabled> Keimanan</label>
+        <label><input type="checkbox" disabled> Kewargaan</label>
+        <label class="checked"><input type="checkbox" checked disabled> Kreativitas</label>
+        <label><input type="checkbox" disabled> Kolaborasi</label>
+        <label><input type="checkbox" disabled> Kemandirian</label>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pn">B</span><span class="pt">Prinsip Mendalam</span></div>
+        <label class="checked"><input type="checkbox" checked disabled> Berkesadaran</label>
+        <label class="checked"><input type="checkbox" checked disabled> Bermakna</label>
+        <label class="checked"><input type="checkbox" checked disabled> Menggembirakan</label>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pn">C</span><span class="pt">Pengalaman Belajar</span></div>
+        <label class="checked"><input type="checkbox" checked disabled> Memahami</label>
+        <label class="checked"><input type="checkbox" checked disabled> Mengaplikasikan</label>
+        <label class="checked"><input type="checkbox" checked disabled> Merefleksi</label>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pn">D</span><span class="pt">Kerangka Mendalam</span></div>
+        <label class="checked"><input type="checkbox" checked disabled> Praktik Pedagogis</label>
+        <label><input type="checkbox" disabled> Lingkungan Belajar</label>
+        <label><input type="checkbox" disabled> Pemanfaatan Digital</label>
+        <label><input type="checkbox" disabled> Kemitraan</label>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pn">E</span><span class="pt">Panca Cinta</span></div>
+        <label class="checked"><input type="checkbox" checked disabled> Cinta Allah</label>
+        <label><input type="checkbox" disabled> Cinta Ilmu</label>
+        <label><input type="checkbox" disabled> Cinta Lingkungan</label>
+        <label class="checked"><input type="checkbox" checked disabled> Cinta Diri</label>
+        <label><input type="checkbox" disabled> Cinta Tanah Air</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card LKPD -->
+  <div class="card" style="background:linear-gradient(135deg,rgba(236,254,255,.7),rgba(207,250,254,.5));border-color:#67E8F9">
+    <div class="card-header">
+      <div class="icon-box icon-teal">📋</div>
+      <div><h2>Bagian 3: LKPD</h2>
+        <p>Pilih jenis LKPD — 10 variasi gambar per jenis</p></div>
+    </div>
+
+    <label style="font-size:12px;font-weight:800;color:#155E75;margin-bottom:8px;display:block">
+           🎨 Pilih Tipe LKPD:
+    </label>
+    <div class="lkpd-types">
+      <label class="checked"><input type="checkbox" checked disabled> 📝 Deskriptif</label>
+      <label><input type="checkbox" disabled> 📐 Template</label>
+      <label class="checked"><input type="checkbox" checked disabled> 🎨 Gambar</label>
+      <label><input type="checkbox" disabled> 🤖 AI</label>
+    </div>
+
+    <label style="font-size:12px;font-weight:800;color:#155E75;margin-bottom:8px;display:block">
+      📚 Pilih Jenis LKPD:
+    </label>
+    <div class="lkpd-jenis">
+      <label class="checked"><input type="checkbox" checked disabled> 🎨 Mewarnai</label>
+      <label><input type="checkbox" disabled> 🖼️ Kolase</label>
+      <label class="checked"><input type="checkbox" checked disabled> ✏️ Tebalkan Huruf</label>
+      <label><input type="checkbox" disabled> 🔢 Tebalkan Angka</label>
+      <label class="checked"><input type="checkbox" checked disabled> 🧮 Menghitung</label>
+      <label><input type="checkbox" disabled> 🔗 Hubungkan Titik</label>
+      <label><input type="checkbox" disabled> 🌀 Maze</label>
+      <label><input type="checkbox" disabled> 🧩 Puzzle</label>
+      <label><input type="checkbox" disabled> 🔍 Cari Perbedaan</label>
+      <label><input type="checkbox" disabled> ⭕ Lingkari Huruf</label>
+      <label><input type="checkbox" disabled> 📄 Melipat Kertas</label>
+      <label><input type="checkbox" disabled> ⭐ Menempel Stiker</label>
+    </div>
+
+    <!-- ============ AI BOX (DARI INDEX.HTML) ============ -->
+    <div class="ai-box">
+      <div class="ai-head">
+        <div class="label"><span class="dot-ai">🤖</span>Mode AI Gemini</div>
+        <label class="switch"><input type="checkbox" id="aiToggle" disabled><span class="slider"></span></label>
+      </div>
+      <div class="ai-status">
+        <span class="dot off" id="statusDot"></span>
+        <span id="statusText">Backend Tidak aktif • gemini-3.5-flash-lite</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-green" disabled>✨ Buat RPP</button>
+      <button class="btn btn-purple" disabled>🎲 Acak Gambar</button>
+      <button class="btn btn-orange" disabled>📄 Download RPP</button>
+      <button class="btn btn-cyan" disabled>📋 Download LKPD</button>
+      <button class="btn btn-red" disabled>🔄 Bersihkan</button>
+    </div>
+  </div>
+
+  <!-- Card Hasil Contoh + Carousel -->
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-box icon-teal">📄</div>
+      <div><h2>Contoh Hasil RPP KBC</h2>
+        <p>Materi, CP, TP, IKTP, Deep Learning &amp; LKPD</p></div>
+    </div>
+
+    <!-- Ringkasan hasil -->
+    <div class="result-header">
+      <h3>📅 RPPH KBC — Diriku / Anggota Tubuhku</h3>
+      <div class="result-info">
+        <div><strong>Satuan:</strong> RA Mazkira Imani</div>
+        <div><strong>Fase:</strong> Fase Fondasi</div>
+        <div><strong>Kelompok:</strong> Kelompok A (4-5 Tahun)</div>
+        <div><strong>Alokasi:</strong> 1 Hari (150 Menit)</div>
+      </div>
+    </div>
+
+    <!-- Carousel LKPD otomatis (CSS only) -->
+    <div class="carousel-wrap">
+      <div class="carousel-title">🖼️ Contoh Variasi Gambar LKPD (otomatis berganti)</div>
+      <div class="carousel">
+
+        <input type="radio" name="slide" id="s1" checked>
+        <input type="radio" name="slide" id="s2">
+        <input type="radio" name="slide" id="s3">
+
+        <div class="slides">
+          <!-- Slide 1: Mewarnai -->
+          <div class="slide slide-1">
+            <div class="slide-emoji">🎨</div>
+            <div class="slide-title">LKPD 1 — Mewarnai Gambar</div>
+            <div class="slide-desc">
+              Warnai gambar anggota tubuhku dengan warna kesukaanmu!<br>
+              <strong>Tujuan:</strong> Motorik halus, mengenal warna<br>
+              <strong>Alat:</strong> Crayon, LKPD
+            </div>
+          </div>
+
+          <!-- Slide 2: Menebalkan Huruf -->
+          <div class="slide slide-2">
+            <div class="slide-emoji">✏️</div>
+            <div class="slide-title">LKPD 2 — Menebalkan Huruf</div>
+            <div class="slide-desc">
+              Tebalkan huruf putus-putus di bawah ini!<br>
+              <strong>Tujuan:</strong> Mengenal huruf, motorik halus<br>
+              <strong>Alat:</strong> Pensil warna, LKPD
+            </div>
+          </div>
+
+          <!-- Slide 3: Menghitung -->
+          <div class="slide slide-3">
+            <div class="slide-emoji">🧮</div>
+            <div class="slide-title">LKPD 3 — Menghitung Objek</div>
+            <div class="slide-desc">
+              Hitung jumlah gambar, lalu tulis angkanya!<br>
+              <strong>Tujuan:</strong> Mengenal angka, berhitung<br>
+              <strong>Alat:</strong> Pensil, penghapus
+            </div>
+          </div>
+        </div>
+
+        <div class="dots">
+          <label for="s1" class="dot"></label>
+          <label for="s2" class="dot"></label>
+          <label for="s3" class="dot"></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section materi dll -->
+    <div class="result-section">
+      <h4>A. Materi KBC</h4>
+      <p>Tubuhku, panca indra, identitas diri, kesukaanku, anggota keluarga</p>
+    </div>
+    <div class="result-section">
+      <h4>B. Capaian Pembelajaran (CP)</h4>
+      <ul>
+        <li><strong>Nilai Agama dan Moral:</strong> Anak mengenal Allah melalui ciptaan-Nya, membiasakan doa harian, dan berperilaku baik kepada orang lain.</li>
+        <li><strong>Fisik Motorik:</strong> Anak melakukan gerakan motorik kasar &amp; halus dengan koordinasi yang semakin baik serta menjaga kesehatan diri.</li>
+        <li><strong>Kognitif:</strong> Anak berpikir kritis sederhana, mengelompokkan benda, menyelesaikan masalah sederhana.</li>
+        <li><strong>Bahasa:</strong> Anak memahami bahasa lisan, mengungkapkan ide dengan kalimat sederhana, mengenal huruf/angka.</li>
+      </ul>
+    </div>
+    <div class="result-section">
+      <h4>C. Tujuan Pembelajaran (TP)</h4>
+      <ul>
+        <li><strong>🕌 Keimanan &amp; Takwa:</strong> Anak mampu mengenal Allah melalui ciptaan-Nya dan membiasakan doa dalam kegiatan sehari-hari.</li>
+        <li><strong>🎨 Kreativitas:</strong> Anak mampu mengekspresikan ide dan imajinasinya melalui berbagai media kreatif.</li>
+      </ul>
+    </div>
+    <div class="result-section">
+      <h4>D. Indikator Ketercapaian (IKTP)</h4>
+      <ul>
+        <li><strong>🕌 Keimanan &amp; Takwa</strong>
+          <ul class="sub">
+            <li>Menyebutkan minimal 2 ciptaan Allah di lingkungan sekitar</li>
+            <li>Mengucapkan doa sebelum &amp; sesudah kegiatan dengan lancar</li>
+          </ul>
+        </li>
+        <li><strong>🎨 Kreativitas</strong>
+          <ul class="sub">
+            <li>Membuat karya sederhana dengan berbagai media</li>
+            <li>Menyanyikan lagu / bergerak mengikuti irama ekspresif</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="result-section">
+      <h4>E. Komponen Deep Learning</h4>
+      <p><strong>Prinsip:</strong> Berkesadaran • Bermakna • Menggembirakan</p>
+      <p><strong>Pengalaman:</strong> Memahami • Mengaplikasikan • Merefleksi</p>
+      <p><strong>Kerangka:</strong> Praktik Pedagogis</p>
+    </div>
+    <div class="result-section">
+      <h4>F. Integrasi Panca Cinta</h4>
+      <ul>
+        <li><strong>💚 Cinta Allah &amp; Rasul-Nya:</strong> Menumbuhkan rasa syukur, cinta kepada Sang Pencipta, keteladanan akhlak Rasulullah.</li>
+        <li><strong>❤️ Cinta Diri &amp; Sesama Manusia:</strong> Menumbuhkan kepercayaan diri, empati, kasih sayang, kemampuan bersosialisasi.</li>
+      </ul>
+    </div>
+    <div class="result-section">
+      <h4>G. Kegiatan Pembelajaran</h4>
+      <p><strong>Pembukaan (±30 Menit):</strong> Salam, doa, bernyanyi lagu tema "Diriku", tanya jawab, dan apersepsi tentang anggota tubuhku.</p>
+      <p><strong>Inti (±150 Menit):</strong> Pengamatan &amp; eksplorasi anggota tubuhku, kegiatan kreatif (mewarnai/menempel), bermain peran, dan mengerjakan LKPD.</p>
+      <p><strong>Penutup (±30 Menit):</strong> Refleksi, apresiasi karya anak, doa penutup, dan salam.</p>
+    </div>
+    <div class="result-section">
+      <h4>H. Asesmen &amp; Refleksi</h4>
+      <ul>
+        <li><strong>Observasi:</strong> Mengamati perilaku anak.</li>
+        <li><strong>Catatan Anekdot:</strong> Mencatat momen ketercapaian IKTP.</li>
+        <li><strong>Hasil Karya:</strong> Mendokumentasikan karya anak.</li>
+      </ul>
+    </div>
+
+    <p class="result-copyright">© 2026 Sugianto, S.Pd., Gr.</p>
+  </div>
+
+  <!-- Card Feedback -->
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-box icon-cyan">💬</div>
+      <div><h2>Informasi &amp; Feedback</h2>
+        <p>Kritik &amp; saran untuk pengembangan</p></div>
+    </div>
+    <div class="feedback-box">
+      <div class="info">
+        <strong>🎯 Tujuan Aplikasi:</strong> Membantu guru RA menyusun RPP KBC secara cepat, mudah, dan menyenangkan.
+        <br><br>
+        <em>"Tak ada Hati yang tak retak. Tak ada Aplikasi yang sempurna."</em>
+        Kami terbuka untuk kritik, saran, dan masukan yang membangun.
+      </div>
+      <input value="Nama Pengirim" disabled>
+      <input value="Asal Sekolah" disabled>
+      <input value="Alamat Email" disabled>
+      <textarea disabled>Isi pesan (kritik / saran / masukan)...</textarea>
+      <button disabled>📨 Kirim Feedback (nonaktif di prototipe)</button>
+    </div>
+    <div class="copyright">© 2026 Sugianto, S.Pd., Gr. ❤</div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- CSS TAMBAHAN (result + carousel + feedback) -->
+<style>
+  /* Result summary */
+  .result-header{
+    background:linear-gradient(135deg,#EFF6FF,#ECFDF5);
+    border:1.5px solid #BFDBFE;border-radius:12px;
+    padding:14px;margin-bottom:14px;
+    transition:all .3s ease;
+  }
+  body.dark .result-header{
+    background:linear-gradient(135deg,#1E293B,#0F2D2D);border-color:#1D4ED8;
+  }
+  .result-header h3{font-size:14px;font-weight:800;margin-bottom:8px;color:var(--text)}
+  .result-info{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:4px 16px;font-size:12px;color:var(--muted);
+  }
+  .result-info strong{color:var(--text);font-weight:700}
+
+  /* Result sections */
+  .result-section{
+    margin-bottom:12px;padding-bottom:12px;
+    border-bottom:1px solid var(--input);
+  }
+  .result-section:last-of-type{border-bottom:none}
+  .result-section h4{
+    font-size:12.5px;font-weight:800;margin-bottom:6px;
+    padding-left:10px;border-left:3px solid var(--primary);
+    color:var(--text);line-height:1.3;
+  }
+  .result-section p,.result-section li{
+    font-size:12px;color:var(--muted);line-height:1.65;
+  }
+  .result-section p{margin-bottom:4px}
+  .result-section ul{list-style:none;padding-left:0}
+  .result-section li{
+    padding-left:16px;position:relative;margin-bottom:3px;
+  }
+  .result-section li::before{
+    content:'';position:absolute;left:4px;top:8px;
+    width:5px;height:5px;border-radius:50%;background:var(--primary);
+  }
+  .result-section ul.sub{margin-left:14px;margin-top:4px}
+  .result-section ul.sub li::before{background:var(--accent);width:4px;height:4px}
+  .result-copyright{
+    text-align:right;font-size:11px;color:#94A3B8;
+    font-style:italic;margin-top:12px;
+  }
+
+  /* CAROUSEL */
+  .carousel-wrap{
+    margin:16px 0 20px;padding:14px;
+    background:linear-gradient(135deg,#ECFEFF,#CFFAFE);
+    border:2px solid #06B6D4;border-radius:14px;
+    transition:all .3s ease;
+  }
+  body.dark .carousel-wrap{
+    background:linear-gradient(135deg,#155E75,#0E7490);border-color:#22D3EE;
+  }
+  .carousel-title{
+    font-size:12px;font-weight:800;color:#155E75;
+    margin-bottom:10px;text-align:center;
+  }
+  body.dark .carousel-title{color:#A5F3FC}
+  .carousel{
+    position:relative;overflow:hidden;
+    border-radius:10px;background:#fff;
+    border:1.5px solid #06B6D4;
+  }
+  body.dark .carousel{background:#0F172A;border-color:#22D3EE}
+  .carousel input[type=radio]{display:none}
+  .slides{
+    display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);
+    width:300%;
+  }
+  .slide{
+    width:33.3333%;padding:18px 16px;
+    display:flex;flex-direction:column;align-items:center;
+    text-align:center;min-height:180px;
+    justify-content:center;
+  }
+  .slide-emoji{font-size:44px;margin-bottom:8px;
+    animation:bounce 2s ease-in-out infinite}
+  @keyframes bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+  }
+  .slide-title{
+    font-size:13px;font-weight:800;color:#155E75;
+    margin-bottom:6px;
+  }
+  body.dark .slide-title{color:#A5F3FC}
+  .slide-desc{
+    font-size:11.5px;color:#0F172A;line-height:1.6;
+  }
+  body.dark .slide-desc{color:#E0F2FE}
+  .slide-desc strong{color:#0891B2}
+  body.dark .slide-desc strong{color:#67E8F9}
+
+  /* Radio → geser slide */
+  #s1:checked ~ .slides{transform:translateX(0)}
+  #s2:checked ~ .slides{transform:translateX(-33.3333%)}
+  #s3:checked ~ .slides{transform:translateX(-66.6666%)}
+
+  /* Dots */
+  .dots{
+    display:flex;justify-content:center;gap:8px;
+    padding:10px;background:rgba(255,255,255,.6);
+    border-top:1.5px solid #06B6D4;
+  }
+  body.dark .dots{background:rgba(0,0,0,.2);border-color:#22D3EE}
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:#94A3B8;cursor:pointer;
+    transition:all .3s ease;display:block;
+  }
+  .dot:hover{background:#06B6D4;transform:scale(1.2)}
+  #s1:checked ~ .dots .dot:nth-child(1),
+  #s2:checked ~ .dots .dot:nth-child(2),
+  #s3:checked ~ .dots .dot:nth-child(3){
+    background:#06B6D4;width:24px;border-radius:6px;
+  }
+
+  /* FEEDBACK */
+  .feedback-box{
+    background:linear-gradient(135deg,#FEF3C7,#FCE7F3);
+    border:2px solid #FBBF24;border-radius:12px;padding:16px;
+    transition:all .3s ease;
+  }
+  body.dark .feedback-box{
+    background:linear-gradient(135deg,#78350F,#831843);
+    border-color:#FBBF24;
+  }
+  .feedback-box .info{
+    font-size:12px;color:#1E293B;line-height:1.7;
+    margin-bottom:12px;padding:10px 12px;
+    background:rgba(255,255,255,.6);
+    border-radius:8px;border-left:3px solid #FBBF24;
+  }
+  body.dark .feedback-box .info{background:rgba(0,0,0,.2);color:#FEF3C7}
+  .feedback-box .info em{
+    color:#92400E;font-weight:700;display:inline-block;margin-top:6px;
+  }
+  body.dark .feedback-box .info em{color:#FDE68A}
+  .feedback-box input,.feedback-box textarea{
+    width:100%;padding:9px 12px;background:#fff;
+    border:1.5px solid #FCD34D;border-radius:8px;
+    font-size:12.5px;margin-bottom:8px;cursor:not-allowed;
+    font-family:inherit;color:#0F172A;
+  }
+  body.dark .feedback-box input,
+  body.dark .feedback-box textarea{background:#1E293B;color:#F1F5F9}
+  .feedback-box textarea{min-height:70px;resize:none}
+  .feedback-box button{
+    width:100%;padding:12px;
+    background:linear-gradient(135deg,#F59E0B,#D97706);
+    color:#fff;border:none;border-radius:10px;
+    font-size:13px;font-weight:700;cursor:not-allowed;
+    opacity:.6;font-family:inherit;
+    transition:all .2s ease;
+  }
+  .feedback-box button:hover{opacity:.75}
+  .copyright{
+    text-align:center;font-size:12px;color:#78350F;
+    font-weight:800;margin-top:14px;padding-top:12px;
+    border-top:2px dashed rgba(251,191,36,.5);
+  }
+  body.dark .copyright{color:#FDE68A}
+
+  /* Responsive result */
+  @media(max-width:600px){
+    .result-info{grid-template-columns:1fr}
+    .slide{padding:14px 12px;min-height:200px}
+    .slide-emoji{font-size:36px}
+  }
+</style>
+
+<!-- SCRIPT MINI: toggle dark mode VISUAL & JAM LIVE & KUNCI COPY PASTE -->
+<script>
+  (function(){
+        // 1. Toggle Dark Mode — default DARK
+    var btn = document.getElementById('themeBtn');
+    if(btn) {
+      btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('dark');
+        var isDark = document.body.classList.contains('dark');
+        btn.textContent = isDark ? '☀️' : '🌙';
+      });
+    }
+
+    // 2. Jam Live WITA
+    function updateClock(){
+      var now = new Date();
+      var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+      var months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      var utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      var wita = new Date(utc + (8 * 3600000));
+      var el = document.getElementById('liveClock');
+      if(el) {
+        el.textContent = days[wita.getDay()] + ', ' + wita.getDate() + ' ' + months[wita.getMonth()] + ' ' + wita.getFullYear() +
+        ' pukul ' + String(wita.getHours()).padStart(2,'0') + '.' + String(wita.getMinutes()).padStart(2,'0') + '.' + String(wita.getSeconds()).padStart(2,'0') + ' WITA';
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 3. Kunci Copy Paste & Klik Kanan
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      alert('⚠️ Klik kanan dinonaktifkan untuk melindungi source code.');
+    });
+    document.addEventListener('copy', function(e) {
+      e.preventDefault();
+      alert('⚠️ Copy dinonaktifkan.');
+    });
+    document.addEventListener('cut', function(e) {
+      e.preventDefault();
+    });
+    document.addEventListener('paste', function(e) {
+      e.preventDefault();
+    });
+    // Cegah seleksi teks via keyboard (Ctrl+A)
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'a' || e.key === 'A' || e.key === 'c' || e.key === 'C' || e.key === 'x' || e.key === 'X')) {
+        e.preventDefault();
+      }
+    });
+
+    console.log('🎨 rev-3 prototipe — Jam Live, AI Box, dan Kunci Copy-Paste Aktif');
+  })();
+</script>
+<script>
+document.getElementById('cardRppm').onclick = function(){
+  document.getElementById('zoneRppm').style.display = 'block';
+};
+document.getElementById('cardRpph').onclick = function(){
+  document.getElementById('zoneRppm').style.display = 'none';
+};
+</script>
+</body>
+</html>
